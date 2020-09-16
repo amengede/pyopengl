@@ -1,4 +1,7 @@
 import glfw
+"""
+    PyOpenGL: initialises a glfw context and opens a window
+"""
 
 if not glfw.init():
     raise Exception("glfw can not be initialised!")
