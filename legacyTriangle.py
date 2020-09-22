@@ -29,8 +29,8 @@ glClearColor(0,0.1,0.1,1)
 #x: -1 = left
 #   1 = right
 #
-#y: -1 = up
-#   1 = down
+#y: 1 = up
+#   -1 = down
 vertices = [-0.5,-0.5,0.0,
             0.5,-0.5,0.0,
             0.0,0.5,0.0]
@@ -40,9 +40,12 @@ colors = [1.0,0.0,0.0,
             0.0,1.0,0.0,
             0.0,0.0,1.0]
 
+#pyopengl doesn't work with python lists, so use numpy arrays
 vertices = np.array(vertices,dtype=np.float32)
 colors = np.array(colors,dtype=np.float32)
 
+#enable array, then load data
+# vertices per array, type, stride, pointer
 glEnableClientState(GL_VERTEX_ARRAY)
 glVertexPointer(3,GL_FLOAT,0,vertices)
 glEnableClientState(GL_COLOR_ARRAY)
@@ -50,8 +53,14 @@ glColorPointer(3,GL_FLOAT,0,colors)
 
 while not glfw.window_should_close(window):
     glfw.poll_events()
+    #background color
     glClear(GL_COLOR_BUFFER_BIT)
-    glRotatef(2,0,1,0)
+    ct = glfw.get_time()
+    glLoadIdentity()
+    glScale(abs(np.sin(ct)),abs(np.sin(ct)),1)
+    glRotatef(np.sin(ct)*45,0,0,1)
+    glTranslatef(np.sin(ct),np.cos(ct),0)
+    #mode, starting index, number of vertices to render
     glDrawArrays(GL_TRIANGLES,0,3)
     glfw.swap_buffers(window)
 
