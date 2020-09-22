@@ -3,32 +3,10 @@ from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram,compileShader
 import numpy as np
 
-vertex_src = """
-#version 330 core
-
-in vec3 a_position;
-in vec3 a_color;
-
-out vec3 v_color;
-
-void main()
-{
-    gl_Position = vec4(a_position,1.0);
-    v_color = a_color;
-}
-"""
-fragment_src = """
-#version 330 core
-
-in vec3 v_color;
-
-out vec4 out_color;
-
-void main()
-{
-    out_color = vec4(v_color,1.0);
-}
-"""
+with open("shaders/basicVertex.txt",'r') as f:
+    vertex_src = f.readlines()
+with open("shaders/basicFragment.txt",'r') as f:
+    fragment_src = f.readlines()
 
 if not glfw.init():
     raise Exception("glfw can not be initialised!")
@@ -44,6 +22,7 @@ glfw.make_context_current(window)
 
 glClearColor(0,0.1,0.1,1)
 
+#(x,y,z,r,g,b,a)
 vertices = [-0.5,-0.5,0.0,1.0,0.0,0.0,
             0.5,-0.5,0.0,0.0,1.0,0.0,
             0.0,0.5,0.0,0.0,0.0,1.0]
@@ -52,12 +31,20 @@ vertices = np.array(vertices,dtype=np.float32)
 
 shader = compileProgram(compileShader(vertex_src,GL_VERTEX_SHADER),
                         compileShader(fragment_src,GL_FRAGMENT_SHADER))
+#Vertex Buffer Object
+#glGenBuffers(no. of buffers)
 VBO = glGenBuffers(1)
+#bind VBO to GL's array buffer
 glBindBuffer(GL_ARRAY_BUFFER,VBO)
+#send data to array buffer
+#(target,size in bytes,array,draw_mode)
 glBufferData(GL_ARRAY_BUFFER,vertices.nbytes,vertices,GL_STATIC_DRAW)
 
+#get a pointer to the position array
 position = glGetAttribLocation(shader,"a_position")
 glEnableVertexAttribArray(position)
+#index, points per vertex, data type, 
+#normalised, stride, pointer to first
 glVertexAttribPointer(position,3,GL_FLOAT,GL_FALSE,24,ctypes.c_void_p(0))
 
 color = glGetAttribLocation(shader,"a_color")
