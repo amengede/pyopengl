@@ -1,0 +1,15 @@
+# version 330
+
+layout(location = 0) in vec3 a_position;
+layout(location = 1) in vec2 a_texture;
+
+uniform mat4 transform;
+
+out vec3 v_color;
+out vec2 v_texture;
+
+void main()
+{
+    gl_Position = transform * vec4(a_position, 1.0);
+    v_texture = vec2(a_texture.s, 1 - a_texture.t);
+}
